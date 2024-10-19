@@ -4,15 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javafx.application.Application;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.*;
 
 public class MemoGUI extends Application 
 {
 	
+	private MemoPane memoPane;
 	private Parent createRightPanel()
 	{	
 		VBox rightPanel = new VBox();
@@ -32,6 +35,12 @@ public class MemoGUI extends Application
 		buttons.add(new Button("Clear"));
 		buttons.add(new Button("Exit")); // I don't see why we need a button to exit, that's what the X is for.
 		
+		for(Button b: buttons)
+		{
+			// allows buttons to stretch.
+			b.setMaxWidth(Double.MAX_VALUE);
+		}
+		
 		// And yes, I'm aware I could've just made the HBox and added things to it, but
 		// I wanted to feel that the effort I expended on making a decent Linked list implementation
 		// should be worth something.
@@ -49,8 +58,11 @@ public class MemoGUI extends Application
 	
 	private Parent createContent()
 	{
-		
-		return new Pane(createRightPanel());
+		memoPane = new MemoPane();
+		memoPane.AddMemo(new MemoRecord(0, new Point2D(100,100), "This is 20 character\nTest Test", Color.BLACK, Color.YELLOW));
+		HBox content = new HBox(memoPane, createRightPanel());
+		HBox.setHgrow(memoPane, Priority.SOMETIMES	);
+		return content;
 	}
 	@Override
     public void start(Stage stage) {

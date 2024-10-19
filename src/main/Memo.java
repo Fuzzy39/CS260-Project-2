@@ -1,69 +1,44 @@
 package main;
-import javafx.geometry.*;
-import javafx.scene.paint.Color;
 
-public class Memo 
+
+
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Paint;
+
+public class Memo extends StackPane 
 {
-	private int ID;
-	private Point2D location;
-	private String note;
-	private Color foregroundColor;
-	private Color backgroundColor;
+
+	private MemoRecord data;
+	private HBox hbox;
 	
-	
-	public Memo(int ID, Point2D location, String note)
-	{
-		this.ID = ID;
-		this.location= location;
-		this.note = note;
-		foregroundColor = Color.BLACK; // black
-		backgroundColor = Color.YELLOW;
+	public Memo(MemoRecord record) {
+		// TODO Auto-generated constructor stub
+		data = record;
+		
+		// then make everything based on the data
+		hbox = new HBox();
+		getChildren().add(hbox);
+		
+		// label
+		Label note = new Label(data.note());
+		note.setMaxSize(100, 100);
+		note.setPrefSize(100, 100);
+		hbox.getChildren().add(note);
+		
+		// close button
+		Button close = new Button("X");
+		close.setCancelButton(true);
+		hbox.getChildren().add(close);
+		
+		this.setBackground(Background.fill(record.backgroundColor())); 
+		relocate(data.location().getX(), data.location().getY());
 	}
-
-
-	public Point2D getLocation() {
-		return location;
-	}
-
-
-	public void setLocation(Point2D location) {
-		this.location = location;
-	}
-
-
-	public String getNote() {
-		return note;
-	}
-
-
-	public void setNote(String note) {
-		this.note = note;
-	}
-
-
-	public Color getForegroundColor() {
-		return foregroundColor;
-	}
-
-
-	public void setForegroundColor(Color foregroundColor) {
-		this.foregroundColor = foregroundColor;
-	}
-
-
-	public Color getBackgroundColor() {
-		return backgroundColor;
-	}
-
-
-	public void setBackgroundColor(Color backgroundColor) {
-		this.backgroundColor = backgroundColor;
-	}
-
-
-	public int getID() {
-		return ID;
-	}
-	
-	
 }
