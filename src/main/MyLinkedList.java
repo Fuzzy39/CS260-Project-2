@@ -60,7 +60,7 @@ public class MyLinkedList<E> implements Cloneable, List<E> {
 		@Override
 		public boolean hasNext() 
 		{
-			return cursorIndex < list.size()-1;
+			return cursorIndex < list.size();
 		}
 	
 		@Override

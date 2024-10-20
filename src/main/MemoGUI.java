@@ -59,7 +59,9 @@ public class MemoGUI extends Application
 	private Parent createContent()
 	{
 		memoPane = new MemoPane();
-		memoPane.AddMemo(new MemoRecord(0, new Point2D(100,100), "This is 20 character\nTest Test", Color.BLACK, Color.YELLOW));
+		memoPane.AddMemo(new MemoRecord(0, new Point2D(100,100), "This is 20 character\nTestTestTestTestTest\nAnother line", 
+				Color.BLACK, Color.YELLOW));
+		memoPane.AddMemo(new MemoRecord(0, new Point2D(300, 300), "No Body!\n", Color.WHITE, Color.CYAN));
 		HBox content = new HBox(memoPane, createRightPanel());
 		HBox.setHgrow(memoPane, Priority.SOMETIMES	);
 		return content;
