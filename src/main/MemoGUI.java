@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.*;
@@ -14,7 +15,7 @@ import javafx.stage.*;
 
 public class MemoGUI extends Application 
 {
-	
+	private Stage mainWindow;
 	private MemoPane memoPane;
 	private Parent createRightPanel()
 	{	
@@ -32,8 +33,33 @@ public class MemoGUI extends Application
 		buttons.add(new Button("Read from File"));
 		buttons.add(new Button("Merge from File"));
 		buttons.add(new Button("Save to File"));
-		buttons.add(new Button("Clear"));
-		buttons.add(new Button("Exit")); // I don't see why we need a button to exit, that's what the X is for.
+		
+		Button clear = new Button("Clear");
+		clear.setOnAction((ActionEvent e)->{memoPane.getChildren().clear();});
+		buttons.add(clear);
+		
+		Button exit = new Button("Exit");
+		// I forgot java lambdas is a weird shoehorn that represent implementations of single method interfaces.
+		// C# really feels polished in comparison, at least in this regard.
+		exit.setOnAction((ActionEvent e)->{mainWindow.close();});
+		buttons.add(exit); // I don't see why we need a button to exit, that's what the X is for, isn't it?
+		// Also I've clearly forgotten everything to do with javafx.
+		// Though I doubt I knew much of it in the first place. I've never used it outside of CS class, for tiny
+		// projects.
+		// This is probably a bit more substantial I suppose.
+		// Would I choose this over swing? probably. css is nice, the fxml seems nice too, though I've not used it.
+		// I don't feel like I understand how javafx works at all though. I suppose in order to learn that I should
+		// read a bunch of the docs... but I doubt I'll do that unless I keep having javafx projects for school.
+		// personally I'd rather learn C++ and try something like Qt or GTK, since I have a decent grasp on java.
+		// but I've never used any of those things, so no idea how they compare.
+		// Am I procrastinating by randomly talking? probably. Whoever's grading my assignment, hopefully you're having a nice day
+		// and maybe this is interesting, I don't know. I hope my comments across everything don't seem too 
+		// obnoxious. I know I don't really know what I'm doing that well on the grand scheme of things, so my 
+		// opinions probably seem very silly.
+		
+		// but, uh, code. right.
+		
+		
 		
 		for(Button b: buttons)
 		{
@@ -45,10 +71,6 @@ public class MemoGUI extends Application
 		// I wanted to feel that the effort I expended on making a decent Linked list implementation
 		// should be worth something.
 		//Button[] buttonArray = buttons.toArray(new Button[0]);
-		System.out.println(buttons);
-		System.out.println(buttons.size());
-		System.out.println(Arrays.toString(buttons.toArray()));
-		System.out.println(Arrays.toString(buttons.toArray(new Button[0])));
 		rightPanel.getChildren().addAll(buttons);
 	
 		return rightPanel;
@@ -61,7 +83,7 @@ public class MemoGUI extends Application
 		memoPane = new MemoPane();
 		memoPane.AddMemo(new MemoRecord(0, new Point2D(100,100), "This is 20 character\nTestTestTestTestTest\nAnother line", 
 				Color.BLACK, Color.YELLOW));
-		memoPane.AddMemo(new MemoRecord(0, new Point2D(300, 300), "No Body!\n", Color.WHITE, Color.CYAN));
+		memoPane.AddMemo(new MemoRecord(0, new Point2D(300, 300), "No Body!\n", Color.WHITE, Color.DARKCYAN));
 		HBox content = new HBox(memoPane, createRightPanel());
 		HBox.setHgrow(memoPane, Priority.SOMETIMES	);
 		return content;
@@ -73,6 +95,7 @@ public class MemoGUI extends Application
         stage.setScene(scene);
         stage.setTitle("Obamazone, for all your obama needs");
         stage.show();
+        mainWindow = stage;
     }
 	
  
