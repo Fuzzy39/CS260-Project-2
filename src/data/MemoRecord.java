@@ -1,4 +1,4 @@
-package main;
+package data;
 import javafx.geometry.*;
 import javafx.scene.paint.Color;
 

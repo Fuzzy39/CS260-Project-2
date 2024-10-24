@@ -2,6 +2,9 @@ package main;
 
 import java.util.Arrays;
 
+import data.MemoLinkedList;
+import data.MemoRecord;
+import data.MyLinkedList;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -22,6 +25,7 @@ public class MemoPane extends Pane
 	{
 		super();
 		memos = new MemoLinkedList();
+		this.getChildren().addListener(getOnChildrenChanged());
 		
 	}
 	
@@ -33,7 +37,7 @@ public class MemoPane extends Pane
 	 * Also, observable list - really cool.
 	 * @return
 	 */
-	private ListChangeListener<? extends Node> getOnChildrenChanged()
+	private ListChangeListener<? super Node> getOnChildrenChanged()
 	{
 		// Something I'm confused about: wildcards. Isn't <? extends Node> the same as <Node>?
 		// I suppose not, technically. Does it matter though?
@@ -54,16 +58,17 @@ public class MemoPane extends Pane
 			
 			
 			// This is very clearly not the best way to do this, but it does work.
+			
+			memos.clear();
 			for(Node node:change.getList())
 			{
 				if(!(node instanceof Memo))
 				{
 					throw new UnsupportedOperationException("A MemoPane can only contain Memos.");
 				}
+				
+				memos.add((Memo)node);
 			}
-			
-			memos.clear();
-			//memos.addAll((Memo[]) getChildren().toArray());
 			
 			assert Arrays.equals(memos.toArray(), getChildren().toArray());
 				
@@ -79,6 +84,35 @@ public class MemoPane extends Pane
 		
 	}	
 	
+	public int getNextID()
+	{
+		// This seems incredibly inefficient. O(n^2).
+		// I imagine it would be better if the list were sorted, or might not have gaps.
+		
+		int nextID=0;
+		boolean changed = true;
+		
+		while(changed)
+		{
+			changed = false;
+			for(Node node : getChildren())
+			{
+				Memo m = (Memo)node;
+				if(m.getData().ID()==nextID)
+				{
+					nextID++;
+					changed = true;
+				}
+			}
+		}
+		return nextID;
+		
+	}
+	
+	public MemoLinkedList getMemos() 
+	{
+		return memos;
+	}
 	
 	
 

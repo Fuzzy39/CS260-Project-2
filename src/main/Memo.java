@@ -2,6 +2,7 @@ package main;
 
 
 
+import data.MemoRecord;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.*;
@@ -12,6 +13,8 @@ import javafx.scene.layout.*;
 
 public class Memo extends StackPane 
 {
+	final static int WIDTH = 150;
+	final static int HEIGHT = 110;
 
 	private MemoRecord data;
 	private VBox vbox;
@@ -21,11 +24,15 @@ public class Memo extends StackPane
 	private Point2D dragLocalStart;
 	
 	public Memo(MemoRecord record) {
+		
+		this.setPrefSize(WIDTH, HEIGHT);
+		this.setMaxSize(WIDTH, HEIGHT);
 		// TODO Auto-generated constructor stub
 		data = record;
 		
 		// Construct the main body
 		vbox = new VBox();
+		vbox.setAlignment(Pos.TOP_LEFT);
 		getChildren().add(vbox);
 		
 		// TitleBar
@@ -56,12 +63,36 @@ public class Memo extends StackPane
 		close.setCancelButton(true);
 		titleBar.getChildren().addAll(header, close);
 		
-		titleBar.setOnMousePressed((MouseEvent e)->
+		
+		
+		// label
+		if(!(getMemoBody().equals("")))
+		{
+			Label note = new Label(getMemoBody());
+			VBox.setMargin(note, new Insets(5));
+			note.setMaxWidth(150);
+			note.setPrefWidth(150);
+			note.setPrefHeight(70);
+			note.setTextFill(data.foregroundColor());
+			
+			vbox.getChildren().add(note);
+		}
+	
+		
+		this.setBackground(Background.fill(record.backgroundColor())); 
+		relocate(data.location().getX(), data.location().getY());
+		setupDrag();
+	}
+	
+	
+	private void setupDrag()
+	{
+		this.setOnMousePressed((MouseEvent e)->
 		{
 			dragLocalStart= sceneToLocal(e.getSceneX(), e.getSceneY());
 		});
 		
-		titleBar.setOnMouseDragged((MouseEvent e)->
+		this.setOnMouseDragged((MouseEvent e)->
 		{
 			// grab the mouse location.
 			Point2D loc = new Point2D(e.getSceneX(), e.getSceneY());
@@ -96,7 +127,7 @@ public class Memo extends StackPane
 		});
 		
 		
-		titleBar.setOnMouseDragReleased((MouseEvent e)->{
+		this.setOnMouseDragReleased((MouseEvent e)->{
 			// update the data.
 			Bounds bounds = getBoundsInParent();
 			Point2D loc = new Point2D(bounds.getMinX(), bounds.getMinY());
@@ -105,22 +136,6 @@ public class Memo extends StackPane
 					data.ID(), loc, data.note(), data.foregroundColor(), data.backgroundColor());
 			data = newData;
 		});
-		
-		
-		// label
-		if(!(getMemoBody().equals("")))
-		{
-			Label note = new Label(getMemoBody());
-			VBox.setMargin(note, new Insets(5));
-			note.setMaxWidth(150);
-			note.setPrefWidth(150);
-			note.setTextFill(data.foregroundColor());
-			vbox.getChildren().add(note);
-		}
-	
-		
-		this.setBackground(Background.fill(record.backgroundColor())); 
-		relocate(data.location().getX(), data.location().getY());
 	}
 	
 	/**
@@ -138,7 +153,7 @@ public class Memo extends StackPane
 	 */
 	public String getTitle()
 	{
-		return data.note().split("\n")[0];
+		return "Memo "+data.ID();
 	}
 	
 	/**
@@ -147,13 +162,6 @@ public class Memo extends StackPane
 	 */
 	public String getMemoBody()
 	{
-		int index = data.note().indexOf('\n');
-		
-		if(index == -1 || index+1 >= data.note().length())
-		{
-			return "";
-		}
-		
-		return data.note().substring(index+1);
+		return data.note();
 	}
 }

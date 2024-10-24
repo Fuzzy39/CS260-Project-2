@@ -1,4 +1,4 @@
-package main;
+package data;
 
 import java.lang.reflect.Array;
 import java.nio.channels.UnsupportedAddressTypeException;
@@ -74,16 +74,32 @@ public class MyLinkedList<E> implements Cloneable, List<E> {
 		}
 	
 		@Override
-		public boolean hasPrevious() {
-			// Because it's expensive (and totally not because I'm lazy), I'm not properly implementing the previous methods.
-			throw new UnsupportedOperationException();
-			//return false;
+		public boolean hasPrevious() 
+		{
+			return cursorIndex!=0;
 		}
 	
 		@Override
-		public E previous() {
-			throw new UnsupportedOperationException();
-			//return null;
+		public E previous()
+		{
+			
+			// O(n).
+			
+			ListNode old = cursor;
+			ListNode toReturn = list.head;
+			
+			if(toReturn == null ) return null;
+			if(previousIndex()<0) throw new IndexOutOfBoundsException();
+			
+			while(toReturn.next!=old)
+			{
+				toReturn = toReturn.next;
+			}
+			
+			cursor = toReturn;
+			cursorIndex--;
+			
+			return toReturn.value;
 		}
 	
 		@Override
@@ -96,13 +112,34 @@ public class MyLinkedList<E> implements Cloneable, List<E> {
 	
 		@Override
 		public int previousIndex() {
-			throw new UnsupportedOperationException();
+			return cursorIndex-1;
 		}
 	
 		@Override
-		public void remove() {
-			// Optional, so not doing it.
-			throw new UnsupportedOperationException();
+		public void remove()
+		{
+			// O(n).
+			if(cursor == null) throw new UnsupportedOperationException();
+			
+			ListNode toRemove = cursor;
+			if(cursorIndex == 0)
+			{
+				cursor = cursor.next;
+				list.head = cursor;
+				return;
+			}
+			
+			ListNode previous = list.head;
+			while(previous.next!=toRemove)
+			{
+				previous = previous.next;
+			}
+			
+			previous.next = toRemove.next;
+			cursor = previous;
+			cursorIndex--;
+			
+			
 		}
 	
 		@Override
@@ -112,9 +149,22 @@ public class MyLinkedList<E> implements Cloneable, List<E> {
 		}
 	
 		@Override
-		public void add(E e) {
-			// optionals
-			throw new UnsupportedOperationException();
+		public void add(E e) 
+		{
+			// O(1).
+			
+			if(cursor == null)
+			{
+				list.head = new ListNode(e);
+				cursor = list.head;
+				cursorIndex = 1;
+				return;
+			}
+			
+			ListNode after = cursor.next;
+			cursor.next = new ListNode(e, after);
+			cursorIndex++;
+			
 		}
 
 	}

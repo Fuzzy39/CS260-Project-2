@@ -1,8 +1,12 @@
 package main;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import data.MemoRecord;
+import data.MyLinkedList;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.geometry.Point2D;
@@ -17,6 +21,10 @@ public class MemoGUI extends Application
 {
 	private Stage mainWindow;
 	private MemoPane memoPane;
+	private MyLinkedList<Button> buttons;
+	private NewMemo newMemoPopup;
+	
+	
 	private Parent createRightPanel()
 	{	
 		VBox rightPanel = new VBox();
@@ -28,11 +36,101 @@ public class MemoGUI extends Application
 		// I would use an arrayList to create the buttons, but given that we're
 		// not supposed to use the built in collection classes, I guess
 		// we'll have to use my linked list, then.
-		MyLinkedList<Button> buttons = new MyLinkedList<Button>();
-		buttons.add(new Button("New Memo"));
-		buttons.add(new Button("Read from File"));
-		buttons.add(new Button("Merge from File"));
-		buttons.add(new Button("Save to File"));
+		buttons = new MyLinkedList<Button>();
+		
+		Button newMemo = new Button("New Memo");
+		buttons.add(newMemo);
+		
+		newMemo.setOnAction((ActionEvent e) ->{
+			// disable buttons when popup is open.
+			setDisable(true);
+			
+			NewMemo popup = new NewMemo(memoPane);
+			newMemoPopup = popup;
+			popup.getWindow().setOnHidden((WindowEvent f)->
+			{
+				setDisable(false);
+			});
+		});
+		
+		
+		Button read = new Button("Read from File");
+		buttons.add(read);
+		read.setOnAction((ActionEvent e) ->
+		{
+			FileChooser fileChooser = new FileChooser();
+			File f = fileChooser.showOpenDialog(mainWindow);
+			MyLinkedList<MemoRecord> memos;
+			if(f == null) return;
+			try 
+			{
+				memos = FileIO.readFile(f.getPath());
+			} 
+			catch (IOException e1) 
+			{	
+				// because like any good program, when we encounter problems, we fail silently, and explain nothing.
+				return;
+			}
+			
+			if(memos == null) return;
+			
+			memoPane.getChildren().clear();
+			for(MemoRecord mr : memos)
+			{
+				memoPane.AddMemo(mr);
+			}
+			
+		});
+		
+		
+		Button merge = new Button("Merge from File"); 
+		buttons.add(merge);
+		merge.setOnAction((ActionEvent e) ->
+		{
+			FileChooser fileChooser = new FileChooser();
+			File f = fileChooser.showOpenDialog(mainWindow);
+			MyLinkedList<MemoRecord> memos;
+			if(f == null) return;
+			try 
+			{
+				memos = FileIO.readFile(f.getPath());
+			} 
+			catch (IOException e1) 
+			{	
+				// because like any good program, when we encounter problems, we fail silently, and explain nothing.
+				return;
+			}
+			
+			if(memos == null) return;
+			
+			for(MemoRecord mr : memos)
+			{
+				memoPane.AddMemo(mr);
+			}
+			
+		});
+		
+		
+		Button save = new Button("Save to File");
+		buttons.add(save);
+		save.setOnAction((ActionEvent e) ->
+		{
+			FileChooser fileChooser = new FileChooser();
+			File f = fileChooser.showOpenDialog(mainWindow);
+			
+			if(f == null) return;
+			try 
+			{
+				FileIO.writeFile(f.getPath(), memoPane.getMemos());
+			} 
+			catch (IOException e1) 
+			{	
+				// because like any good program, when we encounter problems, we fail silently, and explain nothing.
+				return;
+			}
+			
+		});
+		
 		
 		Button clear = new Button("Clear");
 		clear.setOnAction((ActionEvent e)->{memoPane.getChildren().clear();});
@@ -72,6 +170,12 @@ public class MemoGUI extends Application
 		// should be worth something.
 		//Button[] buttonArray = buttons.toArray(new Button[0]);
 		rightPanel.getChildren().addAll(buttons);
+		Label l = new Label("Click and drag memos to move them.");
+		l.setMaxWidth(70);
+		l.setWrapText(true);
+		rightPanel.getChildren().add(l);
+		
+		
 	
 		return rightPanel;
 		
@@ -81,9 +185,9 @@ public class MemoGUI extends Application
 	private Parent createContent()
 	{
 		memoPane = new MemoPane();
-		memoPane.AddMemo(new MemoRecord(0, new Point2D(100,100), "This is 20 character\nTestTestTestTestTest\nAnother line", 
+		memoPane.AddMemo(new MemoRecord(0, new Point2D(100,100), "This is 20 character\nTestTestTestTestTest\nAnother line\n4th line!!!	", 
 				Color.BLACK, Color.YELLOW));
-		memoPane.AddMemo(new MemoRecord(0, new Point2D(300, 300), "No Body!\n", Color.WHITE, Color.DARKCYAN));
+		memoPane.AddMemo(new MemoRecord(1, new Point2D(300, 300), "No Body!\n", Color.WHITE, Color.DARKCYAN));
 		HBox content = new HBox(memoPane, createRightPanel());
 		HBox.setHgrow(memoPane, Priority.SOMETIMES	);
 		return content;
@@ -93,10 +197,29 @@ public class MemoGUI extends Application
        
         Scene scene = new Scene(createContent(), 640, 480);
         stage.setScene(scene);
-        stage.setTitle("Obamazone, for all your obama needs");
+        stage.setTitle("Mason Hill CS260 Project 2 - Memos and Linked Lists");
         stage.show();
         mainWindow = stage;
+        
+        stage.setOnHiding((WindowEvent e)->{
+        	if(newMemoPopup != null)
+        	{
+        		newMemoPopup.getWindow().close();
+        	}
+        
+        });
+        
     }
+	
+	private void setDisable(boolean disabled)
+	{
+		for(Button button : buttons)
+		{
+			button.setDisable(disabled);
+			
+		}
+		memoPane.setDisable(disabled);
+	}
 	
  
 

@@ -1,4 +1,7 @@
-package main;
+package data;
+
+import data.MyLinkedList.MyItr;
+import main.Memo;
 
 /**
  * This class exists to facilitate meeting project requirements.
@@ -19,7 +22,6 @@ public class MemoLinkedList extends MyLinkedList<Memo>
 	
 	public void insertAfter(Memo memo)
 	{
-		// this will always throw an exception since this method wasn't implemented.
 		iterator.add(memo);
 	}
 
@@ -66,7 +68,6 @@ set the cursor to the following node.
 	 */
 	public void memoRemove(int memoID)
 	{
-		// I should probably implement this method
 		iterator.remove();
 		if(!search(memoID))
 		{
@@ -124,8 +125,7 @@ set the cursor to the following node.
 	
 	public void goToPrior()
 	{
-		throw new UnsupportedOperationException("Not implemented.");
-		// I also didn't implement this in the iterator... so meh.
+		iterator.previous();
 	}
 	
 	public void goToNext()
